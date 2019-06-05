@@ -2,7 +2,6 @@ package codes.rajesh;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -26,39 +25,80 @@ public class AsyncMemcacheServlet extends HttpServlet {
 		
 		String path = request.getRequestURI();
 	    if (path.startsWith("/favicon.ico")) {
-	      return; // ignore the request for favicon.ico
+	      return; 
 	    }
 		
 		AsyncMemcacheService asyncCache = MemcacheServiceFactory.getAsyncMemcacheService();
 		asyncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
 		
-		Future<Object> futureValue = asyncCache.get("name");
+//		int[] jamArray = sortOf(new int[] {5,45,34,64,51,23,87});
+//		out.println("Printing sorted array");
+//		for (int a:jamArray)
+//			out.println(a+"<br/>");
 		
-		int[] jamArray = sortOf(new int[] {5,45,34,64,51,23,87});
-		
-		for (int a:jamArray)
-			out.println(a);
 		
 		try {
 			
-			String value = (String) futureValue.get();
-			if (value == null) {
-				out.println("<br/>Value doesn't exist. Written new value.");
-				asyncCache.put("name", "Rajesh");
+//			asyncCache.put("aname", "Rajesh1");
+//			Future<Object> s1 = asyncCache.get("aname");
+//			out.println(s1.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh2");
+//			Future<Object> s2 = asyncCache.get("aname");
+//			out.println(s2.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh3");
+//			Future<Object> s3 = asyncCache.get("aname");
+//			out.println(s3.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh4");
+//			Future<Object> s4 = asyncCache.get("aname");
+//			out.println(s4.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh5");
+//			Future<Object> s5 = asyncCache.get("aname");
+//			out.println(s5.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh6");
+//			Future<Object> s6 = asyncCache.get("aname");
+//			out.println(s6.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh7");
+//			Future<Object> s7 = asyncCache.get("aname");
+//			out.println(s7.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh8");
+//			Future<Object> s8 = asyncCache.get("aname");
+//			out.println(s8.get()+"<br/>");
+//			
+//			asyncCache.put("aname", "Rajesh9");
+//			Future<Object> s9 = asyncCache.get("aname");
+//			out.println(s9.get()+"<br/>");
+			
+			asyncCache.put("aCount", 0);
+			
+			for(int i=0; i<100; i++) {
+				asyncCache.increment("aCount", 20);
 			}
-			else {
-				out.println("<br/>Value exists. Reading from Memcache<br/>");
-				out.println(value);
+			
+			for(int i=0; i<50; i++) {
+				asyncCache.increment("aCount", 40);
 			}
+			
+			for(int i=0; i<50; i++) {
+				asyncCache.increment("aCount", 60);
+			}
+			
+			Future<Object> futureValue = asyncCache.get("aCount");
+			int c = (int) futureValue.get();
+			out.println(c);
+			
 			
 		}catch(InterruptedException | ExecutionException e) {
 			out.println("exception :"+e.toString());
 		}
 		
-	}
-
-	private int[] sortOf(int[] array) {
-		Arrays.sort(array);
-		return array;
+		//out.println("<br/><br/><strong><a style='cursor:pointer' onclick=reload1()>Refresh</a><script>function reload1(){window.location.reload()}</script></strong>");
+		
 	}
 }
